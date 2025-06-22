@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 7%; /* Azul muito escuro, quase preto */
+    --foreground: 210 40% 98%; /* Branco/Cinza claro */
+
+    --card: 220 20% 12%; /* Um pouco mais claro que o fundo */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 20% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 140 70% 45%; /* Verde iFootball */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 80% 55%; /* Azul iFootball */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 25%; /* Azul acinzentado */
+    --muted-foreground: 215 20% 65%; /* Cinza claro */
+
+    --accent: 45 90% 55%; /* Amarelo/Dourado iFootball */
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 72% 51%; /* Vermelho para destruição */
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 20%; /* Borda mais escura */
+    --input: 217 33% 25%; /* Input um pouco mais claro */
+    --ring: 140 70% 45%; /* Verde iFootball para anel de foco */
+
+    --radius: 0.75rem; /* Bordas mais arredondadas */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Estilo para scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.6);
+    border-radius: var(--radius);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+.glassmorphism-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
