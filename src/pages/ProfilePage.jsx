@@ -12,8 +12,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { ImageCropper } from '@/components/ui/image-cropper';
-import { 
-  Loader2, User, Mail, Calendar, Shield, Settings, 
+import { PublishTestimonialForm } from '@/components/profile/PublishTestimonialForm';
+import { testimonialService } from '@/services/testimonialService'; // Import testimonialService
+import {
+  Loader2, User, Mail, Calendar, Shield, Settings,
   Key, Bell, Lock, Upload, Camera, Trophy, Activity,
   Clock, Star, AlertCircle
 } from 'lucide-react';
@@ -32,6 +34,7 @@ export default function ProfilePage() {
     name: '',
     avatar_url: ''
   });
+  const [userTestimonials, setUserTestimonials] = useState([]); // New state for testimonials
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -86,6 +89,21 @@ export default function ProfilePage() {
     }
   };
 
+  const fetchUserTestimonials = async () => {
+    if (!user?.id) return;
+    try {
+      const data = await testimonialService.getUserTestimonials(user.id);
+      setUserTestimonials(data);
+    } catch (error) {
+      console.error('Error fetching user testimonials:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível carregar seus depoimentos.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   // Estatísticas simuladas do usuário
   const userStats = {
     gamesAnalyzed: 128,
@@ -102,6 +120,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       loadUserProfile();
+      fetchUserTestimonials(); // Fetch testimonials when user is available
     }
   }, [user]);
 
@@ -229,6 +248,10 @@ export default function ProfilePage() {
     }
   };
 
+  const handleTestimonialSubmitted = () => {
+    fetchUserTestimonials(); // Refresh testimonials after a new one is submitted
+  };
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -317,10 +340,11 @@ export default function ProfilePage() {
 
       {/* Tabs de Conteúdo */}
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid grid-cols-4 md:w-[400px] mb-4">
+        <TabsList className="grid grid-cols-5 md:w-[600px] px-2 mb-4">
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="stats">Estatísticas</TabsTrigger>
           <TabsTrigger value="settings">Configurações</TabsTrigger>
+          <TabsTrigger value="testimonials">Testemunhos</TabsTrigger>
           <TabsTrigger value="security">Segurança</TabsTrigger>
         </TabsList>
 
@@ -492,6 +516,68 @@ export default function ProfilePage() {
                   {/* Adicionar configurações de visualização aqui */}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Aba de Testemunhos */}
+        <TabsContent value="testimonials">
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Seus Depoimentos Publicados</CardTitle>
+              <CardDescription>
+                Aqui estão todos os depoimentos que você publicou.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {userTestimonials.length > 0 ? (
+                userTestimonials.map((testimonial) => (
+                  <motion.div
+                    key={testimonial.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-muted/50 p-4 rounded-lg shadow-sm border border-border"
+                  >
+                    <div className="flex items-center mb-2">
+                      <Avatar className="h-10 w-10 mr-3">
+                        <AvatarImage src={testimonial.user_profiles?.avatar_url || ''} />
+                        <AvatarFallback>
+                          {testimonial.user_profiles?.full_name?.charAt(0) || <User className="h-5 w-5" />}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{testimonial.user_profiles?.full_name || 'Usuário Anônimo'}</p>
+                        <div className="flex items-center gap-1 text-yellow-500">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} className="h-4 w-4 fill-yellow-500" />
+                          ))}
+                          {[...Array(5 - testimonial.rating)].map((_, i) => (
+                            <Star key={i} className="h-4 w-4 text-gray-400" />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground italic mb-2">"{testimonial.quote}"</p>
+                    <p className="text-xs text-gray-500 text-right">
+                      Publicado em {new Date(testimonial.created_at).toLocaleDateString('pt-BR')}
+                    </p>
+                  </motion.div>
+                ))
+              ) : (
+                <p className="text-muted-foreground">Você ainda não publicou nenhum depoimento.</p>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Publicar Novo Testemunho</CardTitle>
+              <CardDescription>
+                Compartilhe sua experiência com o iFootball.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PublishTestimonialForm onTestimonialSubmitted={handleTestimonialSubmitted} />
             </CardContent>
           </Card>
         </TabsContent>

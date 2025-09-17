@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { testimonialService } from '@/services/testimonialService'; // Import the new service
 import { Star, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -48,13 +49,11 @@ export function PublishTestimonialForm({
 
     setLoading(true);
     try {
-      const { error } = await supabase.from('testimonials').insert({
+      await testimonialService.submitTestimonial({
         user_id: user.id,
         quote: quote,
         rating: rating
       });
-
-      if (error) throw error;
 
       setQuote('');
       setRating(0);
