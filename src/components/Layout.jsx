@@ -25,6 +25,7 @@ const Layout = ({ children }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [vrzAnimation, setVrzAnimation] = useState(null);
+  const [layoutAnimation, setLayoutAnimation] = useState(null);
   
   // Carrega a animação Lottie
   useEffect(() => {
@@ -32,6 +33,12 @@ const Layout = ({ children }) => {
       .then(response => response.json())
       .then(data => setVrzAnimation(data))
       .catch(error => console.error('Error loading Lottie animation:', error));
+      
+    // Carrega a animação do layout
+    fetch('/layout.json')
+      .then(response => response.json())
+      .then(data => setLayoutAnimation(data))
+      .catch(error => console.error('Error loading Layout animation:', error));
   }, []);
   
   // Memoiza os itens de navegação para evitar recriações
@@ -78,8 +85,8 @@ const Layout = ({ children }) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center space-x-2">
-              <img src="/ifootball-logo.svg" alt="iFootball Logo" className="h-10 w-auto" />
-              <span className="text-2xl font-bold text-primary">iFootball</span>
+              <img src="/i-football-logo.svg" alt="iFootball Logo" className="h-16 w-auto" />
+              
             </Link>
             <nav className="hidden md:flex items-center space-x-2">
               {memoizedNavItems.map((item) => (
@@ -120,46 +127,52 @@ const Layout = ({ children }) => {
               ))}
 
               {/* Área de autenticação */}
-              <div className="ml-4 border-l border-slate-600 pl-4">
-                {isAuthenticated ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-2 px-3 py-2 bg-slate-800 rounded-lg">
-                      <User size={16} className="text-green-400" />
-                      <span className="text-sm text-slate-300">
-                        {user?.email?.split('@')[0] || 'Usuário'}
-                      </span>
-                      {isAdmin && (
-                        <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded">
-                          Admin
-                        </span>
+                      <div className="ml-4 border-l border-slate-600 pl-4">
+                      {isAuthenticated ? (
+                        <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="text-slate-300 hover:bg-slate-700"
+                        >
+                          <Link to="/perfil" className="flex items-center space-x-2 px-3 py-2">
+                          <User size={16} className="text-green-400" />
+                          <span className="text-sm">
+                            {user?.email?.split('@')[0] || 'Usuário'}
+                          </span>
+                          {isAdmin && (
+                            <span className="text-xs bg-orange-600 text-white px-2 py-0.5 rounded">
+                            Admin
+                            </span>
+                          )}
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleLogout}
+                          className="text-slate-300 border-slate-600 hover:bg-slate-700"
+                        >
+                          <LogOut size={16} className="mr-2" />
+                          Sair
+                        </Button>
+                        </div>
+                      ) : (
+                        <Button
+                        variant="outline"
+                        asChild
+                        className="text-slate-300 border-slate-600 hover:bg-slate-700"
+                        >
+                        <Link to="/login" className="flex items-center space-x-2">
+                          <LogIn size={16} />
+                          <span>Login</span>
+                        </Link>
+                        </Button>
                       )}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleLogout}
-                      className="text-slate-300 border-slate-600 hover:bg-slate-700"
-                    >
-                      <LogOut size={16} className="mr-2" />
-                      Sair
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    asChild
-                    className="text-slate-300 border-slate-600 hover:bg-slate-700"
-                  >
-                    <Link to="/login" className="flex items-center space-x-2">
-                      <LogIn size={16} />
-                      <span>Login</span>
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            </nav>
-            
-            {/* Menu móvel */}
+                      </div>
+                    </nav>
+                    
+                    {/* Menu móvel */}
             <div className="md:hidden">
               <Button 
                 variant="ghost" 
@@ -262,7 +275,7 @@ const Layout = ({ children }) => {
         </div>
       </motion.header>
       
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-grow">
         {children}
       </main>
 

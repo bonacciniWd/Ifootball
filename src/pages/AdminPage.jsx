@@ -72,16 +72,15 @@ const AdminPage = () => {
     userEmail: user?.email,
     checkingAdmin: checkingAdmin
   });
-
   // Mostra loading enquanto verifica admin
   if (checkingAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
-        <Card className="bg-slate-800 border-slate-700 max-w-md">
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card className="bg-card border-border max-w-md">
           <CardContent className="pt-6 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h3 className="text-xl font-semibold text-white mb-2">Verificando permissões...</h3>
-            <p className="text-slate-400">Aguarde um momento</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">Verificando permissões...</h3>
+            <p className="text-muted-foreground">Aguarde um momento</p>
           </CardContent>
         </Card>
       </div>
@@ -90,12 +89,12 @@ const AdminPage = () => {
 
   if (!isAuthenticated || !isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
-        <Card className="bg-slate-800 border-slate-700 max-w-md">
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card className="bg-card border-border max-w-md">
           <CardContent className="pt-6 text-center">
-            <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Acesso Negado</h3>
-            <p className="text-slate-400 mb-4">Você não tem permissão para acessar esta área</p>
+            <Shield className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">Acesso Negado</h3>
+            <p className="text-muted-foreground mb-4">Você não tem permissão para acessar esta área</p>
             <Button onClick={() => navigate('/')} className="w-full">
               Voltar ao Início
             </Button>
@@ -106,101 +105,96 @@ const AdminPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-8 px-4">
+    <div className="space-y-8">
       <Helmet>
         <title>Administração - iFootball</title>
         <meta name="description" content="Painel administrativo do iFootball" />
       </Helmet>
 
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-2">
-            <Crown className="h-8 w-8 text-yellow-500" />
-            <h1 className="text-4xl font-bold text-white">Administração</h1>
-          </div>
-          <p className="text-xl text-slate-400">
-            Painel de controle e gerenciamento do sistema
-          </p>
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center space-x-2">
+          <Crown className="h-8 w-8 text-accent" />
+          <h1 className="text-4xl font-bold text-foreground">Administração</h1>
         </div>
-
-        {/* Dashboard Overview */}
+        <p className="text-xl text-muted-foreground">
+          Painel de controle e gerenciamento do sistema
+        </p>
+      </div>        {/* Dashboard Overview */}
         {dashboardStats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardContent className="pt-6">
                 <div className="flex items-center">
-                  <Users className="h-8 w-8 text-blue-500" />
+                  <Users className="h-8 w-8 text-primary" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-400">Total Usuários</p>
-                    <p className="text-2xl font-bold text-white">{dashboardStats.totalUsers}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Total Usuários</p>
+                    <p className="text-2xl font-bold text-foreground">{dashboardStats.totalUsers}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardContent className="pt-6">
                 <div className="flex items-center">
-                  <Activity className="h-8 w-8 text-green-500" />
+                  <Activity className="h-8 w-8 text-primary" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-400">Usuários Ativos</p>
-                    <p className="text-2xl font-bold text-white">{dashboardStats.activeUsers}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Usuários Ativos</p>
+                    <p className="text-2xl font-bold text-foreground">{dashboardStats.activeUsers}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardContent className="pt-6">
                 <div className="flex items-center">
-                  <Crown className="h-8 w-8 text-yellow-500" />
+                  <Crown className="h-8 w-8 text-accent" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-400">Total Convites</p>
-                    <p className="text-2xl font-bold text-white">{dashboardStats.totalInviteCodes}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Total Convites</p>
+                    <p className="text-2xl font-bold text-foreground">{dashboardStats.totalInviteCodes}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardContent className="pt-6">
                 <div className="flex items-center">
-                  <BarChart3 className="h-8 w-8 text-purple-500" />
+                  <BarChart3 className="h-8 w-8 text-secondary" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-400">Convites Usados</p>
-                    <p className="text-2xl font-bold text-white">{dashboardStats.usedInviteCodes}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Convites Usados</p>
+                    <p className="text-2xl font-bold text-foreground">{dashboardStats.usedInviteCodes}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-        )}
-
-        {/* Tabs */}
+        )}        {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 bg-slate-800 border-slate-700">
-            <TabsTrigger value="invites" className="data-[state=active]:bg-blue-600">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 bg-card border-border">
+            <TabsTrigger value="invites" className="data-[state=active]:bg-primary">
               <Users className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Convites</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="users" className="data-[state=active]:bg-primary">
               <Activity className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Usuários</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-primary">
               <BarChart3 className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="settings" className="data-[state=active]:bg-primary">
               <Settings className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Config</span>
             </TabsTrigger>
-            <TabsTrigger value="database" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="database" className="data-[state=active]:bg-primary">
               <Database className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Dados</span>
             </TabsTrigger>
-            <TabsTrigger value="system" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="system" className="data-[state=active]:bg-primary">
               <Shield className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Sistema</span>
             </TabsTrigger>
@@ -209,18 +203,16 @@ const AdminPage = () => {
           {/* Convites */}
           <TabsContent value="invites" className="space-y-6">
             <AdminInviteManager />
-          </TabsContent>
-
-          {/* Usuários */}
+          </TabsContent>          {/* Usuários */}
           <TabsContent value="users" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <Activity className="h-5 w-5 mr-2" />
                   Gerenciamento de Usuários
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-slate-400">
+              <CardContent className="text-muted-foreground">
                 <p className="mb-4">🚧 <strong>Em desenvolvimento:</strong></p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Lista de usuários registrados</li>
@@ -235,18 +227,18 @@ const AdminPage = () => {
 
           {/* Analytics */}
           <TabsContent value="analytics" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <BarChart3 className="h-5 w-5 mr-2" />
                   Analytics e Relatórios
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-slate-400">
+              <CardContent className="text-muted-foreground">
                 <p className="mb-4">📊 <strong>Métricas planejadas:</strong></p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold text-white mb-2">Usuários</h4>
+                    <h4 className="font-semibold text-foreground mb-2">Usuários</h4>
                     <ul className="list-disc list-inside space-y-1">
                       <li>Registros por dia/mês</li>
                       <li>Conversão de convites</li>
@@ -255,7 +247,7 @@ const AdminPage = () => {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-white mb-2">Sistema</h4>
+                    <h4 className="font-semibold text-foreground mb-2">Sistema</h4>
                     <ul className="list-disc list-inside space-y-1">
                       <li>Uso da API</li>
                       <li>Análises realizadas</li>
@@ -270,14 +262,14 @@ const AdminPage = () => {
 
           {/* Configurações */}
           <TabsContent value="settings" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <Settings className="h-5 w-5 mr-2" />
                   Configurações do Sistema
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-slate-400">
+              <CardContent className="text-muted-foreground">
                 <p className="mb-4">⚙️ <strong>Configurações disponíveis:</strong></p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Parâmetros de licenças</li>
@@ -292,14 +284,14 @@ const AdminPage = () => {
 
           {/* Database */}
           <TabsContent value="database" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <Database className="h-5 w-5 mr-2" />
                   Gerenciamento de Dados
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-slate-400">
+              <CardContent className="text-muted-foreground">
                 <p className="mb-4">🗄️ <strong>Operações de dados:</strong></p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Backup do banco de dados</li>
@@ -314,37 +306,36 @@ const AdminPage = () => {
 
           {/* Sistema */}
           <TabsContent value="system" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-foreground flex items-center">
                   <Shield className="h-5 w-5 mr-2" />
                   Status do Sistema
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-slate-400">
+              <CardContent className="text-muted-foreground">
                 <p className="mb-4">🔧 <strong>Monitoramento MVP:</strong></p>
                 <div className="space-y-4">
-                  <div className="bg-slate-700 p-4 rounded-lg">
-                    <h4 className="font-semibold text-white mb-2">API Football</h4>
-                    <p className="text-green-400">✅ Endpoints funcionais: jogadores, times</p>
-                    <p className="text-yellow-400">⚠️ Fallback ativo: partidas, ligas, estatísticas</p>
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-semibold text-foreground mb-2">API Football</h4>
+                    <p className="text-primary">✅ Endpoints funcionais: jogadores, times</p>
+                    <p className="text-accent">⚠️ Fallback ativo: partidas, ligas, estatísticas</p>
                   </div>
-                  <div className="bg-slate-700 p-4 rounded-lg">
-                    <h4 className="font-semibold text-white mb-2">Sistema de Licenças</h4>
-                    <p className="text-green-400">✅ Convites funcionais</p>
-                    <p className="text-yellow-400">🚧 Gateway de pagamento: em desenvolvimento</p>
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-semibold text-foreground mb-2">Sistema de Licenças</h4>
+                    <p className="text-primary">✅ Convites funcionais</p>
+                    <p className="text-accent">🚧 Gateway de pagamento: em desenvolvimento</p>
                   </div>
-                  <div className="bg-slate-700 p-4 rounded-lg">
-                    <h4 className="font-semibold text-white mb-2">Análises</h4>
-                    <p className="text-green-400">✅ Análise básica funcional</p>
-                    <p className="text-yellow-400">🚧 Análise de vídeo: futuro</p>
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-semibold text-foreground mb-2">Análises</h4>
+                    <p className="text-primary">✅ Análise básica funcional</p>
+                    <p className="text-accent">🚧 Análise de vídeo: futuro</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
     </div>
   );
 };

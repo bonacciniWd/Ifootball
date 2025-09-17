@@ -40,21 +40,20 @@ const VideoStream = ({
       <CardContent>
         <div className="relative group">
           {/* Player de Vídeo */}
-          <div className="aspect-video bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 relative overflow-hidden">
-            {streamUrl ? (
+          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center text-muted-foreground relative overflow-hidden">            {streamUrl ? (
               // TODO: Implementar player real quando streamUrl estiver disponível
-              <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-muted to-background flex items-center justify-center">
                 <div className="text-center">
-                  <Eye size={48} className="mx-auto mb-2 text-slate-400" />
-                  <p className="text-lg text-slate-300">Stream Conectado</p>
-                  <p className="text-sm text-slate-500 mt-1">URL: {streamUrl}</p>
+                  <Eye size={48} className="mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-lg text-foreground">Stream Conectado</p>
+                  <p className="text-sm text-muted-foreground mt-1">URL: {streamUrl}</p>
                 </div>
               </div>
             ) : (
               <div className="text-center">
                 <BarChart size={64} className="mx-auto mb-2" />
                 <p className="text-xl">Placeholder para Vídeo/Stream da Partida</p>
-                <p className="text-sm text-slate-400 mt-2">Streaming será implementado em breve</p>
+                <p className="text-sm text-muted-foreground mt-2">Streaming será implementado em breve</p>
               </div>
             )}
 

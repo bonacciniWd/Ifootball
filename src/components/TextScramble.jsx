@@ -5,13 +5,17 @@ const TextScramble = ({ texts, className = "", duration = 4000, scrambleDuration
   const [displayText, setDisplayText] = useState('');
   const [isScrambling, setIsScrambling] = useState(false);
   
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-  const techChars = '█▉▊▋▌▍▎▏▐░▒▓';
+  const chars = 'Technologic Dispposing';
+  const techChars = '0101001010001001010101';
+
+  const longestTextLength = Math.max(...texts.map(text => text.length));
+  const calculatedMinWidth = `${longestTextLength * 1.2}ch`; // Estimate 1.2ch per character
+
   useEffect(() => {
     if (texts.length === 0) return;
     
     // Initialize with first text
-    setDisplayText(texts[0]);
+    setDisplayText(texts[currentTextIndex]);
     
     // Start the cycling
     const cycleInterval = setInterval(() => {
@@ -19,21 +23,8 @@ const TextScramble = ({ texts, className = "", duration = 4000, scrambleDuration
     }, duration);
 
     return () => clearInterval(cycleInterval);
-  }, [texts, duration]); // Removendo currentTextIndex daqui para evitar loop
-
-  useEffect(() => {
-    // Separate effect for cycling through texts
-    if (texts.length <= 1) return;
-    
-    const cycleTimeout = setTimeout(() => {
-      if (!isScrambling) {
-        scrambleToNextText();
-      }
-    }, duration);
-
-    return () => clearTimeout(cycleTimeout);
-  }, [currentTextIndex, isScrambling, duration]);
-
+  }, [texts, duration, currentTextIndex]); // Adicionando currentTextIndex aqui para garantir que o efeito reaja às mudanças
+  
   const scrambleToNextText = () => {
     if (isScrambling) return;
     
@@ -84,11 +75,10 @@ const TextScramble = ({ texts, className = "", duration = 4000, scrambleDuration
 
   return (
     <span 
-      className={`font-mono inline-block transition-all duration-100 ${className}`}
+      className={`font-mono inline-block transition-all duration-300 ${className}`}
       style={{ 
         letterSpacing: '0.05em',
-        textShadow: '0 0 10px rgba(255,255,255,0.6',
-        minWidth: '600px', // Prevent layout shift
+        minWidth: calculatedMinWidth, 
         textAlign: 'center'
       }}
     >

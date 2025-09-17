@@ -235,7 +235,7 @@ const RecentMatches = ({ matches = [] }) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {matches.slice(0, 10).map((match, index) => {
             const status = getMatchStatus(match.fixture?.status);
             
@@ -245,53 +245,54 @@ const RecentMatches = ({ matches = [] }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors"
+                className="flex flex-col p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors"
               >
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="text-xs text-slate-400 w-12">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="text-xs text-slate-400">
                     {formatDate(match.fixture?.timestamp)}
                   </div>
-                  
-                  <div className="flex items-center space-x-2 flex-1">
+                  <Badge className={`${status.color} text-white text-xs`}>
+                    {status.text}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-3 items-center gap-2">
+                  <div className="flex flex-col items-center space-y-1">
                     {match.teams?.home?.logo && (
                       <img 
                         src={match.teams.home.logo} 
                         alt={match.teams.home.name}
-                        className="w-5 h-5 object-contain"
+                        className="w-8 h-8 object-contain"
                       />
                     )}
-                    <span className="text-sm text-white truncate">
+                    <span className="text-sm text-white text-center truncate max-w-[120px]">
                       {match.teams?.home?.name}
                     </span>
                   </div>
 
                   <div className="text-center">
                     {match.goals && (match.goals.home !== null || match.goals.away !== null) ? (
-                      <span className="text-sm font-bold text-primary">
+                      <div className="text-lg font-bold text-primary">
                         {match.goals.home} - {match.goals.away}
-                      </span>
+                      </div>
                     ) : (
-                      <span className="text-xs text-slate-400">vs</span>
+                      <div className="text-sm text-slate-400">vs</div>
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2 flex-1 justify-end">
-                    <span className="text-sm text-white truncate">
-                      {match.teams?.away?.name}
-                    </span>
+                  <div className="flex flex-col items-center space-y-1">
                     {match.teams?.away?.logo && (
                       <img 
                         src={match.teams.away.logo} 
                         alt={match.teams.away.name}
-                        className="w-5 h-5 object-contain"
+                        className="w-8 h-8 object-contain"
                       />
                     )}
+                    <span className="text-sm text-white text-center truncate max-w-[120px]">
+                      {match.teams?.away?.name}
+                    </span>
                   </div>
                 </div>
-
-                <Badge className={`${status.color} text-white text-xs ml-3`}>
-                  {status.text}
-                </Badge>
               </motion.div>
             );
           })}

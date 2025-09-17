@@ -1,0 +1,307 @@
+
+/* Custom font for Apfel Grotezk - you'll need to host this font file */
+@font-face {
+    font-family: 'Apfel Grotezk';
+    src: url('fonts/ApfelGrotezk-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --primare: #22b562;
+    --darke: #060606;
+    --whitee: #ffffff;
+    --graye: #888888;
+    --glass-bge: rgba(255, 255, 255, 0.05);
+    --glass-bordere: rgba(255, 255, 255, 0.1);
+    --glass-highlighte: rgba(255, 255, 255, 0.15);
+    --glass-shadowe: rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--darke);
+    color: var(--whitee);
+    line-height: 1.6;
+    background: linear-gradient(135deg, #060606 0%, #121212 100%);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Apfel Grotezk', sans-serif;
+    font-weight: normal;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.partners-section {
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.partners-section::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    border-radius: 50%;
+    background: var(--primare);
+    opacity: 0.15;
+    filter: blur(80px);
+    top: 10%;
+    left: 50px;
+    z-index: 0;
+}
+
+.partners-section::after {
+    content: '';
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: var(--primare);
+    opacity: 0.1;
+    filter: blur(60px);
+    bottom: 15%;
+    right: -50px;
+    z-index: 0;
+}
+
+.grid-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+}
+
+.section-header {
+    position: relative;
+    margin-bottom: 5rem;
+    z-index: 1;
+}
+
+.header-glass {
+    padding: 3rem;
+    border-radius: 20px;
+    background: var(--glass-bge);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-bordere);
+    box-shadow: 0 10px 30px var(--glass-shadowe);
+}
+
+
+.partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    perspective: 1000px;
+    position: relative;
+    z-index: 1;
+}
+
+.partner-card {
+    background: var(--glass-bge);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-bordere);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.partner-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-highlighte), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.partner-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--primare), transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.partner-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: var(--glass-highlighte);
+}
+
+.partner-card:hover::before {
+    opacity: 1;
+}
+
+.partner-card:hover::after {
+    transform: scaleX(1);
+}
+
+.partner-logo {
+    width: auto;
+    height: 350px;
+    object-fit: cover;
+    filter: grayscale(100%) brightness(1);
+    transition: all 0.4s ease;
+    margin-bottom: 0;
+    z-index: 0;
+    position: absolute;
+}
+
+.partner-card:hover .partner-logo {
+    filter: grayscale(0%) brightness(1.2);
+    transform: scale(1.05);
+    margin-bottom: 1.5rem;
+}
+
+.partner-card .partner-info-container {
+    width: 100%;
+    min-height: 250px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.partner-card:hover .partner-info-container {
+    height: auto;
+    opacity: 1;
+}
+
+.partner-name {
+    font-family: 'Apfel Grotezk', sans-serif;
+    font-size: 1.2rem;
+    color: var(--whitee);
+    
+    transform: translateY(40px);
+    opacity: 0;
+    display: absolute;
+
+    z-index: 10;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.partner-category {
+    font-size: 1.2rem;
+    color: #fff;
+    transform: translateY(20px);
+    opacity: 0;
+    min-width: 100vw;
+    transition: transform 0.3s ease 0.1s, opacity 0.3s ease 0.1s;
+    padding: 0.3rem 1rem;
+    border-radius: 10px;
+  
+}
+
+.partner-card:hover .partner-name,
+.partner-card:hover .partner-category {
+    transform: translateY(0);
+    opacity: 1;
+    
+}
+
+.card-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.8s;
+}
+
+.partner-card:hover .card-shine {
+    transform: translateX(100%);
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2.5rem; /* Adjusted from 3rem */
+    }
+    
+    .partners-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    
+    .header-glass {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 2rem; /* Adjusted from 2.5rem */
+    }
+    
+    .partners-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-glass {
+        padding: 1.5rem;
+    }
+}
+
+
+
+@keyframes pulse {
+    50% {
+        opacity: .1;
+    }
+}
+.animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    
+}

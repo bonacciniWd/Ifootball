@@ -1,14 +1,47 @@
 import axios from 'axios';
 
-// Configuração da API usando variáveis de ambiente
-const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
-const RAPIDAPI_HOST = import.meta.env.VITE_RAPIDAPI_HOST;
-const BASE_URL = `https://${RAPIDAPI_HOST}`;
+// ============= CONFIGURAÇÃO DE MÚLTIPLAS APIs =============
+
+// API atual (pode ter rate limiting)
+const CURRENT_API = {
+  key: import.meta.env.VITE_RAPIDAPI_KEY,
+  host: import.meta.env.VITE_RAPIDAPI_HOST,
+  baseUrl: `https://${import.meta.env.VITE_RAPIDAPI_HOST}`,
+  name: 'current'
+};
+
+// APIs alternativas - adicione suas novas APIs aqui
+const ALTERNATIVE_APIS = [
+  {
+    key: import.meta.env.VITE_RAPIDAPI_KEY_ALT1, // Nova API 1
+    host: import.meta.env.VITE_RAPIDAPI_HOST_ALT1,
+    baseUrl: `https://${import.meta.env.VITE_RAPIDAPI_HOST_ALT1}`,
+    name: 'api-football',
+    endpoints: {
+      fixtures: '/fixtures',
+      players: '/players',
+      teams: '/teams',
+      standings: '/standings'
+    }
+  },
+  {
+    key: import.meta.env.VITE_RAPIDAPI_KEY_ALT2, // Nova API 2
+    host: import.meta.env.VITE_RAPIDAPI_HOST_ALT2,
+    baseUrl: `https://${import.meta.env.VITE_RAPIDAPI_HOST_ALT2}`,
+    name: 'football-api-v3',
+    endpoints: {
+      fixtures: '/v3/fixtures',
+      players: '/v3/players/search',
+      teams: '/v3/teams',
+      standings: '/v3/standings'
+    }
+  }
+];
 
 // Validação das credenciais
-if (!RAPIDAPI_KEY || !RAPIDAPI_HOST) {
+if (!CURRENT_API.key || !CURRENT_API.host) {
   console.error('❌ Credenciais da API não encontradas! Verifique o arquivo .env');
-  throw new Error('Credenciais da API não configuradas corretamente');
+  console.info('💡 Funcionando em modo fallback com dados de demonstração');
 }
 
 // Cache configuration
@@ -147,10 +180,10 @@ const FALLBACK_DATA = {
 class FootballApiService {
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: BASE_URL,
+      baseURL: CURRENT_API.baseUrl,
       headers: {
-        'x-rapidapi-key': RAPIDAPI_KEY,
-        'x-rapidapi-host': RAPIDAPI_HOST,
+        'x-rapidapi-key': CURRENT_API.key,
+        'x-rapidapi-host': CURRENT_API.host,
         'Content-Type': 'application/json'
       },
       timeout: 15000 // 15 segundos timeout
@@ -227,8 +260,7 @@ class FootballApiService {
   // =====================================================
   // MÉTODOS FUNCIONAIS (ENDPOINTS REAIS)
   // =====================================================
-
-  // Busca jogadores (FUNCIONAL)
+  // Busca jogadores (FUNCIONAL + ADAPTADOR)
   async searchPlayers(searchTerm = 'messi') {
     const cacheKey = `${CACHE_KEYS.PLAYERS}_${searchTerm}`;
     
@@ -238,6 +270,16 @@ class FootballApiService {
     }
 
     try {
+      // Tentar usar o adaptador moderno primeiro
+      if (modernAPI) {
+        console.log('🔄 Usando adaptador moderno para busca de jogadores');
+        const data = await modernAPI.searchPlayers(searchTerm);
+        this.saveToCache(cacheKey, data);
+        return data;
+      }
+
+      // Fallback para API antiga
+      console.log('🔄 Usando API legada para busca de jogadores');
       const response = await this.axiosInstance.get('/football-players-search', {
         params: { search: searchTerm }
       });
@@ -251,7 +293,9 @@ class FootballApiService {
         console.log('⚠️ Retornando cache expirado devido a erro na API');
         return cached;
       }
-      throw error;
+      
+      // Retornar dados de fallback se disponível
+      return this.getFallbackPlayersData(searchTerm);
     }
   }
 
@@ -715,8 +759,7 @@ class FootballApiService {
         message: error.message || 'Erro de conectividade',
         mvpReady: false
       };
-    }
-  }
+    }  }
 
   // Verifica status da API e limites
   getApiStatus() {
@@ -730,12 +773,41 @@ class FootballApiService {
       };
     });
 
+    // Estrutura de APIs para o monitor
+    const availableApis = [
+      {
+        name: 'API-Football (RapidAPI)',
+        configured: !!CURRENT_API.key && !!CURRENT_API.host,
+        status: CURRENT_API.key && CURRENT_API.host ? 'active' : 'inactive',
+        failed: false,
+        lastCheck: new Date().toISOString()
+      },
+      {
+        name: 'Football-Data.org',
+        configured: false,
+        status: 'inactive',
+        failed: false,
+        lastCheck: new Date().toISOString()
+      },
+      {
+        name: 'Fallback Data',
+        configured: true,
+        status: 'active',
+        failed: false,
+        lastCheck: new Date().toISOString()
+      }
+    ];
+
     return {
+      currentApi: CURRENT_API.name || 'Fallback Data',
+      availableApis,
+      rateLimitedApis: {}, // Para futuro uso
+      failedApis: [], // Para futuro uso
       cacheStatuses,
       apiCredentials: {
-        hasKey: !!RAPIDAPI_KEY,
-        hasHost: !!RAPIDAPI_HOST,
-        baseUrl: BASE_URL
+        hasKey: !!CURRENT_API.key,
+        hasHost: !!CURRENT_API.host,
+        baseUrl: CURRENT_API.baseUrl
       },
       endpoints: {
         functional: ['football-players-search', 'football-teams-search'],
@@ -745,7 +817,6 @@ class FootballApiService {
       futureIntegration: 'Python + análise de vídeo + alertas em tempo real'
     };
   }
-
   // Limpa todo o cache
   clearCache() {
     const keysCleared = [];
@@ -758,6 +829,14 @@ class FootballApiService {
     });
     console.log(`🗑️ Cache limpo: ${keysCleared.length} entradas removidas`);
     return keysCleared;
+  }
+
+  // Reset API failures (para o monitor de status)
+  resetApiFailures() {
+    console.log('🔄 Resetando falhas de APIs');
+    // Por enquanto, só limpa o cache para forçar novas tentativas
+    this.clearCache();
+    return true;
   }
 }
 
@@ -891,4 +970,60 @@ function getEventStatsFallback(eventId) {
   };
 }
 
+// Fallback para dados de jogadores
+function getFallbackPlayersData(searchTerm) {
+  console.log(`⚠️ Usando dados de fallback para busca: ${searchTerm}`);
+  
+  const samplePlayers = [
+    {
+      id: 1,
+      name: 'Cristiano Ronaldo',
+      team: 'Al Nassr',
+      position: 'Forward',
+      age: 39,
+      nationality: 'Portugal',
+      photo: 'https://media.api-sports.io/football/players/874.png'
+    },
+    {
+      id: 2,
+      name: 'Lionel Messi',
+      team: 'Inter Miami',
+      position: 'Forward', 
+      age: 36,
+      nationality: 'Argentina',
+      photo: 'https://media.api-sports.io/football/players/154.png'
+    },
+    {
+      id: 3,
+      name: 'Neymar Jr',
+      team: 'Al Hilal',
+      position: 'Forward',
+      age: 32,
+      nationality: 'Brazil',
+      photo: 'https://media.api-sports.io/football/players/276.png'
+    },
+    {
+      id: 4,
+      name: 'Kylian Mbappé',
+      team: 'PSG',
+      position: 'Forward',
+      age: 25,
+      nationality: 'France',
+      photo: 'https://media.api-sports.io/football/players/1313.png'
+    }
+  ];
+
+  // Filtrar jogadores baseado no termo de busca
+  const filtered = samplePlayers.filter(player => 
+    player.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return {
+    status: 'fallback',
+    response: filtered.length > 0 ? filtered : samplePlayers.slice(0, 2),
+    message: 'Dados de demonstração (API indisponível)'
+  };
+}
+
 export const footballApiService = new FootballApiService();
+export default footballApiService; 

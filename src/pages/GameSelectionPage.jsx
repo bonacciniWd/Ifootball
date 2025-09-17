@@ -38,8 +38,7 @@ const GameSelectionPage = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center">
         <Target size={48} className="text-primary mb-4" />
-        <h2 className="text-2xl font-semibold mb-2">Acesso Restrito</h2>
-        <p className="text-slate-400 mb-6">
+        <h2 className="text-2xl font-semibold mb-2">Acesso Restrito</h2>        <p className="text-muted-foreground mb-6">
           Você precisa estar logado para selecionar jogos para análise.
         </p>
         <Button onClick={() => navigate('/login')} className="mr-4">

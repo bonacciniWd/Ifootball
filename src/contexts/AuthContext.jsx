@@ -36,6 +36,48 @@ export const AuthProvider = ({ children }) => {
     };
   }, []); // Array vazio - só executa uma vez
 
+  const updateUserProfile = async (userData) => {
+    try {
+      // Primeiro, verificamos se o perfil já existe
+      const { data: existingProfile } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      const updateData = {
+        id: user.id,
+        full_name: userData.full_name,
+        username: userData.username,
+        name: userData.name,
+        avatar_url: userData.avatar_url || existingProfile?.avatar_url,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .upsert(updateData)
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Erro Supabase:', error);
+        throw new Error(error.message);
+      }
+
+      // Atualiza o estado do usuário com todos os dados
+      const updatedUser = {
+        ...user,
+        ...updateData
+      };
+      
+      setUser(updatedUser);
+      return data;
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      throw new Error('Não foi possível atualizar o perfil. Por favor, tente novamente.');
+    }
+  };
+
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -106,6 +148,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     logout,
     loading,
+    updateUserProfile,
     isAuthenticated: !!user,
   };
 

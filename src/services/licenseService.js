@@ -16,7 +16,17 @@ export const licenseService = {
         return licenseService.getMVPLicenseData(userId);
       }
       
-      return data;
+      // Se encontrou dados no banco, sincroniza com localStorage
+      if (data) {
+        console.log('📋 Licença encontrada no banco:', data);
+        licenseService.saveMVPLicense(userId, data);
+        return data;
+      }
+      
+      // Se não encontrou no banco, verifica no localStorage
+      const localData = licenseService.getMVPLicenseData(userId);
+      console.log('💾 Dados do localStorage:', localData);
+      return localData;
     } catch (error) {
       console.warn('🚧 MVP: Erro no banco, usando fallback para licenças');
       return licenseService.getMVPLicenseData(userId);
@@ -33,6 +43,24 @@ export const licenseService = {
       } catch (error) {
         console.error('Erro ao carregar licença do localStorage:', error);
       }
+    }
+
+    // Para desenvolvimento: cria licença ativa automaticamente
+    if (process.env.NODE_ENV === 'development' && userId) {
+      console.log('🚧 Desenvolvimento: Criando licença ativa para teste');
+      const devLicense = {
+        id: 1,
+        user_id: userId,
+        license_type: 'free_trial',
+        status: 'active',
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      // Salva no localStorage para persistir
+      licenseService.saveMVPLicense(userId, devLicense);
+      return devLicense;
     }
 
     // Retorna null se não há licença armazenada
@@ -376,5 +404,64 @@ export const licenseService = {
     };
 
     return await licenseService.createLicense(licenseData);
-  }
+  },
+
+  // Função para debug e verificação de licenças
+  debugUserLicense: async (userId) => {
+    console.log('🔍 Debug de licença para usuário:', userId);
+    
+    try {
+      // Verifica no banco
+      const { data: dbData, error: dbError } = await supabase
+        .from('user_licenses')
+        .select('*')
+        .eq('user_id', userId);
+      
+      console.log('📊 Dados do banco:', dbData, 'Erro:', dbError);
+      
+      // Verifica no localStorage
+      const localData = licenseService.getMVPLicenseData(userId);
+      console.log('💾 Dados do localStorage:', localData);
+      
+      // Verifica se há discrepância
+      if (dbData && dbData.length > 0 && !localData) {
+        console.log('⚠️ Discrepância detectada: banco tem dados, localStorage não');
+        licenseService.saveMVPLicense(userId, dbData[0]);
+        return dbData[0];
+      }
+      
+      if (!dbData || dbData.length === 0) {
+        console.log('❌ Nenhuma licença encontrada no banco');
+        return null;
+      }
+      
+      return dbData[0];
+    } catch (error) {
+      console.error('❌ Erro no debug:', error);
+      return null;
+    }
+  },
+
+  // Força sincronização entre banco e localStorage
+  syncLicenseData: async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_licenses')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (data) {
+        console.log('🔄 Sincronizando licença:', data);
+        licenseService.saveMVPLicense(userId, data);
+        return data;
+      } else {
+        console.log('❌ Nenhuma licença para sincronizar');
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ Erro na sincronização:', error);
+      return null;
+    }
+  },
 };

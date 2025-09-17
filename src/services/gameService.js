@@ -34,35 +34,52 @@ export const gameService = {
   getLiveGames: async () => {
     try {
       const matches = await footballApiService.getLiveMatches();
-      console.log(`🔴 ${matches.response?.length || 0} partidas ao vivo carregadas`);
+      console.log(`🔴 ${matches?.length || 0} partidas ao vivo carregadas`);
       return matches;
     } catch (error) {
       console.error('Error fetching live games:', error);
-      throw error;
+      // Retornar array vazio em vez de throw para não quebrar a aplicação
+      return [];
     }
   },
 
-  // Busca odds ao vivo para um evento específico (DADOS REAIS)
+  // Busca odds ao vivo para um evento específico (SIMULADO)
   getLiveOdds: async (eventId, countryCode = 'BR') => {
     try {
-      const odds = await footballApiService.getLiveOdds(eventId, countryCode);
-      console.log(`🎲 Odds ao vivo carregadas para evento ${eventId}`);
-      return odds;
+      // Método não implementado ainda, retornar dados simulados
+      console.log(`🎲 Odds simuladas para evento ${eventId}`);
+      return {
+        eventId,
+        odds: {
+          home: 2.1,
+          draw: 3.2,
+          away: 3.8
+        },
+        simulated: true
+      };
     } catch (error) {
       console.error(`Error fetching live odds for event ${eventId}:`, error);
-      throw error;
+      return null;
     }
   },
 
-  // Busca estatísticas ao vivo de um evento (TEMPO REAL)
+  // Busca estatísticas ao vivo de um evento (SIMULADO)
   getLiveEventStats: async (eventId) => {
     try {
-      const stats = await footballApiService.getLiveEventStats(eventId);
-      console.log(`📊 Stats ao vivo carregadas para evento ${eventId}`);
-      return stats;
+      // Método não implementado ainda, retornar dados simulados
+      console.log(`📊 Stats simuladas para evento ${eventId}`);
+      return {
+        eventId,
+        stats: {
+          possession: { home: 55, away: 45 },
+          shots: { home: 8, away: 5 },
+          corners: { home: 4, away: 2 }
+        },
+        simulated: true
+      };
     } catch (error) {
       console.error(`Error fetching live stats for event ${eventId}:`, error);
-      throw error;
+      return null;
     }
   },
 
@@ -97,18 +114,23 @@ export const gameService = {
       return players;
     } catch (error) {
       console.error('Error searching players:', error);
-      throw error;
+      // Retornar array vazio em vez de throw
+      return [];
     }
   },
 
   // Busca times
   searchTeams: async (searchTerm = 'manchester') => {
     try {
-      const teams = await footballApiService.searchTeams(searchTerm);
-      return teams;
+      const teams = await footballApiService.getTeams();
+      // Filtrar por termo de busca
+      return teams.filter(team => 
+        team.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        team.team?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     } catch (error) {
       console.error('Error searching teams:', error);
-      throw error;
+      return [];
     }
   },
 

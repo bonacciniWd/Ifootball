@@ -123,29 +123,31 @@ export const FootballDashboard = () => {
           )}
         </div>
         {liveMatches.length > 0 ? (
-          <div className="space-y-3">
-            {liveMatches.slice(0, 5).map((match, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <p className="font-medium">{match.teams?.home?.name}</p>
-                    <p className="text-sm text-gray-600">Casa</p>
-                  </div>
-                  <div className="text-center font-bold text-lg">
-                    {match.goals?.home ?? 0} - {match.goals?.away ?? 0}
-                  </div>
-                  <div className="text-center">
-                    <p className="font-medium">{match.teams?.away?.name}</p>
-                    <p className="text-sm text-gray-600">Visitante</p>
-                  </div>
-                </div>
-                <div className="text-right">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {liveMatches.slice(0, 6).map((match, index) => (
+              <div key={index} className="flex flex-col p-4 border rounded-lg hover:bg-gradient-to-tr dark:hover:bg-slate-800 transition-colors">
+                <div className="flex justify-between items-center mb-2">
                   <span className="bg-red-500 text-white px-2 py-1 rounded text-xs">
                     {match.fixture?.status?.elapsed}'
                   </span>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-muted-foreground">
                     {match.league?.name}
                   </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="grid grid-cols-3 items-center gap-2">
+                    <div className="text-center">
+                      <p className="font-medium truncate">{match.teams?.home?.name}</p>
+                      <p className="text-xs text-muted-foreground">Casa</p>
+                    </div>
+                    <div className="text-center font-bold text-lg">
+                      {match.goals?.home ?? 0} - {match.goals?.away ?? 0}
+                    </div>
+                    <div className="text-center">
+                      <p className="font-medium truncate">{match.teams?.away?.name}</p>
+                      <p className="text-xs text-muted-foreground">Visitante</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

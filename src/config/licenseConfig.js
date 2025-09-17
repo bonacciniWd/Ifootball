@@ -173,18 +173,20 @@ export const LICENSE_CONFIG = {
 export const licenseUtils = {
   // Verifica se usuário tem acesso a uma funcionalidade
   hasFeature: (userLicense, feature) => {
-    if (!userLicense || !userLicense.type) return false;
+    if (!userLicense) return false;
     
-    const licenseConfig = LICENSE_CONFIG[userLicense.type.toUpperCase()];
+    const licenseType = userLicense.license_type || userLicense.type;
+    if (!licenseType) return false;
+    
+    const licenseConfig = LICENSE_CONFIG[licenseType.toUpperCase()];
     return licenseConfig?.features?.[feature] || false;
   },
-
   // Verifica se licença está ativa
   isLicenseActive: (userLicense) => {
     if (!userLicense) return false;
     
     const now = new Date();
-    const expiryDate = new Date(userLicense.expiresAt);
+    const expiryDate = new Date(userLicense.expires_at || userLicense.expiresAt);
     
     return now <= expiryDate && userLicense.status === 'active';
   },
@@ -194,13 +196,12 @@ export const licenseUtils = {
     if (!userLicense) return 0;
     
     const now = new Date();
-    const expiryDate = new Date(userLicense.expiresAt);
+    const expiryDate = new Date(userLicense.expires_at || userLicense.expiresAt);
     const diffTime = expiryDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     return Math.max(0, diffDays);
   },
-
   // Verifica se pode usar funcionalidade baseado em limites
   canUseFeature: (userLicense, featureName, currentUsage = 0) => {
     if (!licenseUtils.hasFeature(userLicense, featureName)) {
@@ -211,7 +212,8 @@ export const licenseUtils = {
       return { allowed: false, reason: 'license_expired' };
     }
 
-    const licenseConfig = LICENSE_CONFIG[userLicense.type.toUpperCase()];
+    const licenseType = userLicense.license_type || userLicense.type;
+    const licenseConfig = LICENSE_CONFIG[licenseType?.toUpperCase()];
     const limits = licenseConfig?.limits;
 
     // Verifica limites específicos

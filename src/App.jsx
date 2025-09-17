@@ -13,11 +13,13 @@ import InvitePage from '@/pages/InvitePage';
 import AdminPage from '@/pages/AdminPage';
 import SearchPage from '@/pages/SearchPage';
 import LiveTrackingPage from '@/pages/LiveTrackingPage';
-import PrivacyPage from '@/pages/PrivacyPageSimple';
+import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPageSimple';
+import ProfilePage from '@/pages/ProfilePage';
 import Layout from '@/components/Layout';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { WelcomePopup } from './components/WelcomePopup';
 
 function App() {
   return (
@@ -47,6 +49,22 @@ function App() {
               <Route path="/termos" element={<TermsPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/perfil" 
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path="/dashboard" 
                 element={
                   <ProtectedRoute>
@@ -63,6 +81,7 @@ function App() {
                 } 
               />
             </Routes>
+            <WelcomePopup />
           </Layout>
           <Toaster />
         </Router>
