@@ -215,6 +215,9 @@ export function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 p-8 text-white">
+            Por que escolher o iFootball?
+          </h2>
         </motion.div>
 
         
